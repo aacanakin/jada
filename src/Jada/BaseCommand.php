@@ -7,8 +7,15 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use Exception;
+
 class BaseCommand extends Command
 {
+	/**
+	 * Variable holds raw configuration
+	 */
+	protected $_config;
+
 	/**
 	 * Variable holds configuration array
 	 */
@@ -48,7 +55,7 @@ class BaseCommand extends Command
 	public function __construct(array $config)
 	{
 		parent::__construct();
-		$this->config = $config;
+		$this->_config = $config;
 	}
 
 	/**
@@ -108,6 +115,14 @@ class BaseCommand extends Command
 	}
 
 	/**
+	 * Function register configuration
+	 */
+	protected function registerConfig($environment = 'default')
+	{
+		$this->config = $this->_config[$environment];
+	}
+
+	/**
 	 * Function of symfony's configure command
 	 */
 	protected function configure()
@@ -125,12 +140,17 @@ class BaseCommand extends Command
 			);
 		}
 
+		$this->options[] = array(
+			'name' => 'env',
+			'description' => 'application environment'
+		);
+
 		foreach ($this->options as $option)
 		{
 			$this->addOption(
 				$option['name'],
 				null,
-				InputOption::VALUE_NONE,
+				InputOption::VALUE_REQUIRED,
 				$option['description']
 			);
 		}
@@ -143,6 +163,18 @@ class BaseCommand extends Command
 	{
 		$this->in = $in;
 		$this->out = $out;
+
+		$environment = $this->option('env');
+
+		if (empty($environment)) {
+			$this->registerConfig();
+		} else {
+			$this->registerConfig($environment);
+		}
+
+		// p($this->_config);
+		p($this->config);
+
 		$this->main();
 	}
 }

@@ -6,11 +6,19 @@ use Symfony\Component\Console\Application;
 date_default_timezone_set('UTC');
 
 $commands = array();
-$command_dir = 'app/Console/';
+$environments = array();
+$configurations = array();
+$paths = array(
+	'command' => 'app/Console/',
+	'config'  => 'config/'
+);
 
-if (is_dir($command_dir)) {
+/**
+ * Scan commands
+ */
+if (is_dir($paths['command'])) {
 
-	if ($dh = opendir($command_dir)) {
+	if ($dh = opendir($paths['command'])) {
 
 		while (($file = readdir($dh)) !== false)
 		{
@@ -26,11 +34,52 @@ $app = new Application();
 
 foreach ($commands as $command)
 {
+	/**
+	 * Scan environments
+	 */
+	if (is_dir($paths['config'])) {
+
+		if ($dh = opendir($paths['config'])) {
+
+			while (($file = readdir($dh)) !== false)
+			{
+				if (filetype($paths['config'] . $file) == 'dir') {
+
+					$environments[] = $file;
+
+				} else {
+
+					$environments[] = 'default';
+				}
+			}
+
+			$environments = array_slice($environments, 2, sizeof($environments));
+		}
+	}
+
+	/**
+	 * Scan raw configurations
+	 */
+	foreach ($environments as $environment)
+	{
+		$config = array();
+
+		if ($environment == 'default') {
+
+			$config = require 'config/config.php';
+
+			$configurations[$environment] = array_merge($config['app'], $config[$command]);
+
+		} else {
+
+			$config = require 'config/' . $environment . '/config.php';
+
+			$configurations[$environment] = array_merge($config['app'], $config[$command]);
+		}
+	}
+
 	$command_class = '\\Console\\' . $command;
-
-	$config = require 'config/app.php';
-
-	$app->add(new $command_class(array_merge($config['common'], $config[$command])));
+	$app->add(new $command_class($configurations));
 }
 
 $app->run();

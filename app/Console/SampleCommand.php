@@ -25,8 +25,8 @@ class SampleCommand extends BaseCommand
 
 	protected function main()
 	{
-		p($this->config);
-		d($this->config);
+		// p($this->config);
+		// d($this->config);
 
 		if ($this->option('exc')) {
 
