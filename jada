@@ -1,11 +1,7 @@
 #!/usr/bin/env php
 <?php
-/*
- *
- * Application console
- *
- */
 require 'vendor/autoload.php';
+use Symfony\Component\Console\Application;
 
 date_default_timezone_set('UTC');
 
@@ -26,16 +22,15 @@ if (is_dir($command_dir)) {
 	}
 }
 
-pe($commands);
-
-use Symfony\Component\Console\Application;
-
 $app = new Application();
 
 foreach ($commands as $command)
 {
 	$command_class = '\\Console\\' . $command;
-	$app->add(new $command_class);
+
+	$config = require 'config/app.php';
+
+	$app->add(new $command_class(array_merge($config['common'], $config[$command])));
 }
 
 $app->run();
