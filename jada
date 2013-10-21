@@ -1,0 +1,41 @@
+#!/usr/bin/env php
+<?php
+/*
+ *
+ * Application console
+ *
+ */
+require 'vendor/autoload.php';
+
+date_default_timezone_set('UTC');
+
+$commands = array();
+$command_dir = 'app/Console/';
+
+if (is_dir($command_dir)) {
+
+	if ($dh = opendir($command_dir)) {
+
+		while (($file = readdir($dh)) !== false)
+		{
+			$file_pieces = explode('.', $file);
+			if (! empty($file_pieces[0])) {
+				$commands[] = $file_pieces[0];
+			}
+		}
+	}
+}
+
+pe($commands);
+
+use Symfony\Component\Console\Application;
+
+$app = new Application();
+
+foreach ($commands as $command)
+{
+	$command_class = '\\Console\\' . $command;
+	$app->add(new $command_class);
+}
+
+$app->run();

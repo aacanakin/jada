@@ -27,7 +27,7 @@
 		},
 
 		"files" : [
-			"src/functions.php"
+			"src/Jada/Functions.php"
 		]
 	}
 }
