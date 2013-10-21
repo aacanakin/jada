@@ -1,0 +1,33 @@
+{
+	"name" : "arascanakin/jada",
+
+	"description" : "the simple framework for great command-line applications",
+
+	"license" : "MIT",
+
+	"authors" : [
+		{
+			"name" : "Aras Can Akin",
+			"email" : "aacanakin@gmail.com"
+		}
+	],
+
+	"keywords" : ["command-line", "console", "framework"],
+
+	"require" : {
+		"php": ">=5.3.3",
+		"symfony/console": "2.4.*@dev"
+	},
+
+	"autoload" : {
+
+		"psr-0" : {
+			"Console\\" : "app/",
+			"Jada\\"    : "src/"
+		},
+
+		"files" : [
+			"src/functions.php"
+		]
+	}
+}
