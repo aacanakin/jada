@@ -1,0 +1,85 @@
+#!/usr/bin/env php
+<?php
+require 'vendor/autoload.php';
+use Symfony\Component\Console\Application;
+
+date_default_timezone_set('UTC');
+
+$commands = array();
+$environments = array();
+$configurations = array();
+$paths = array(
+	'command' => 'app/Console/',
+	'config'  => 'config/'
+);
+
+/**
+ * Scan commands
+ */
+if (is_dir($paths['command'])) {
+
+	if ($dh = opendir($paths['command'])) {
+
+		while (($file = readdir($dh)) !== false)
+		{
+			$file_pieces = explode('.', $file);
+			if (! empty($file_pieces[0])) {
+				$commands[] = $file_pieces[0];
+			}
+		}
+	}
+}
+
+$app = new Application();
+
+foreach ($commands as $command)
+{
+	/**
+	 * Scan environments
+	 */
+	if (is_dir($paths['config'])) {
+
+		if ($dh = opendir($paths['config'])) {
+
+			while (($file = readdir($dh)) !== false)
+			{
+				if (filetype($paths['config'] . $file) == 'dir') {
+
+					$environments[] = $file;
+
+				} else {
+
+					$environments[] = 'default';
+				}
+			}
+
+			$environments = array_slice($environments, 2, sizeof($environments));
+		}
+	}
+
+	/**
+	 * Scan raw configurations
+	 */
+	foreach ($environments as $environment)
+	{
+		$config = array();
+
+		if ($environment == 'default') {
+
+			$config = require 'config/config.php';
+
+			$configurations[$environment] = array_merge($config['app'], $config[$command]);
+
+		} else {
+
+			$config = require 'config/' . $environment . '/config.php';
+
+			$configurations[$environment] = array_merge($config['app'], $config[$command]);
+		}
+	}
+
+	$command_class = '\\Console\\' . $command;
+	$app->add(new $command_class($configurations));
+}
+
+$app->run();

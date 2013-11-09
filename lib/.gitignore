@@ -1,0 +1,2 @@
+# non-composer based 3rd party custom libraries should reside here
+!.gitignore
