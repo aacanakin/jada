@@ -53,6 +53,7 @@ foreach ($commands as $command)
 				}
 			}
 
+			asort($environments);
 			$environments = array_slice($environments, 2, sizeof($environments));
 		}
 	}
@@ -66,15 +67,32 @@ foreach ($commands as $command)
 
 		if ($environment == 'default') {
 
-			$config = require 'config/config.php';
-
-			$configurations[$environment] = array_merge($config['app'], $config[$command]);
+			if (file_exists(__DIR__ . '/config/config.php')) {
+				$config = require __DIR__ . '/config/config.php';
+			} else {
+				$config = null;
+			}
+			
+			if (! empty($config[$command])) {
+				$configurations[$environment] = array_merge($config['app'], $config[$command]);
+			} else {
+				$configurations[$environment] = $config['app'];
+			}
+			
 
 		} else {
 
-			$config = require 'config/' . $environment . '/config.php';
+			if (file_exists(__DIR__ . '/config/' . $environment . '/config.php')) {
+				$config = require __DIR__ . '/config/' . $environment . '/config.php';
+			} else {
+				$config = null;
+			}
 
-			$configurations[$environment] = array_merge($config['app'], $config[$command]);
+			if (! empty($config[$command])) {
+				$configurations[$environment] = array_merge($config['app'], $config[$command]);
+			} else {
+				$configurations[$environment] = $config['app'];
+			}
 		}
 	}
 
