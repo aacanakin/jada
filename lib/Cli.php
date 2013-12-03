@@ -42,4 +42,41 @@ class Cli
 			return 0;
 		}
 	}
+
+	static public function ls($path, $ignore_dots = true)
+	{
+		$files = array();
+
+		if (is_dir($path)) {
+			if ($handle = opendir($path)) {
+			    echo "Directory handle: $handle\n";
+			    echo "Entries:\n";
+
+			    /* This is the correct way to loop over the directory. */
+			    while (false !== ($entry = readdir($handle))) {
+			    	$entry = trim($entry);
+			    	if (! $ignore_dots) {
+			    		$files[] = $entry;
+			    	} else {
+			    		if ($entry != '.' && $entry != '..') {
+			    			$files[] = $entry;
+			    		}
+			    	}
+			    }
+
+			    closedir($handle);
+			} else {
+				return null;
+			}
+
+		} else {
+			if (file_exists($path)) {
+				$files[] = $path;
+			} else {
+				return null;
+			}
+		}
+
+		return $files;
+	}
 }
