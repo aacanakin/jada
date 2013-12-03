@@ -49,10 +49,7 @@ class Cli
 
 		if (is_dir($path)) {
 			if ($handle = opendir($path)) {
-			    echo "Directory handle: $handle\n";
-			    echo "Entries:\n";
 
-			    /* This is the correct way to loop over the directory. */
 			    while (false !== ($entry = readdir($handle))) {
 			    	$entry = trim($entry);
 			    	if (! $ignore_dots) {
