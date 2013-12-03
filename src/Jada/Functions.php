@@ -1,4 +1,5 @@
 <?php
+define ('ROOT', dirname(dirname(dirname(__FILE__))));
 /**
  * The global helper functions which can be used in both application & framework level
  * @author Aras Can Akin <aacanakin@gmail.com>
@@ -22,6 +23,10 @@ function d($data, $return = false)
  */
 function p($data, $return = false)
 {
+	if (! is_array($data)) {
+		$data .= "\n";
+	}
+	
 	if ($return) {
 
 		$return = print_r($data, $return);
@@ -42,4 +47,25 @@ function de($data, $return = false)
 {
 	d($data, $return);
 	exit;
+}
+
+function rstrtrim($str, $remove=null) 
+{ 
+    $str    = (string)$str; 
+    $remove = (string)$remove;    
+    
+    if(empty($remove)) 
+    { 
+        return rtrim($str); 
+    } 
+    
+    $len = strlen($remove); 
+    $offset = strlen($str)-$len; 
+    while($offset > 0 && $offset == strpos($str, $remove, $offset)) 
+    { 
+        $str = substr($str, 0, $offset); 
+        $offset = strlen($str)-$len; 
+    } 
+    
+    return rtrim($str);   
 }
