@@ -172,9 +172,6 @@ class BaseCommand extends Command
 			$this->registerConfig($environment);
 		}
 
-		// p($this->_config);
-		p($this->config);
-
 		$this->main();
 	}
 }
