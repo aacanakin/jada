@@ -12,3 +12,5 @@ ta-da
 - cron support (maybe)
 - command:new should be added to jada
 - base command interface should be changed
+- add a default command with custom ui other than symfony's interface
+- custom styling in error messages
