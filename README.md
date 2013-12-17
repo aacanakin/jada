@@ -3,7 +3,7 @@ jada
 
 the simple command line framework for php
 
-v0.0.4
+v0.0.5
 
 ta-da
 =====
