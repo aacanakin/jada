@@ -69,3 +69,23 @@ function rstrtrim($str, $remove=null)
     
     return rtrim($str);   
 }
+
+function contains($string, $sub_string)
+{
+    return (strpos($string, $sub_string) !== false);
+}
+
+function dot_get($array, $key)
+{
+    if (is_array($array)) {
+
+        $key_pieces = explode('.', $key);
+        foreach ($key_pieces as $key)
+        {
+            $array = $array[$key];
+        } 
+    }
+    
+    return $array;
+}
+
